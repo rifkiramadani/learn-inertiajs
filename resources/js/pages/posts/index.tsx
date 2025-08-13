@@ -10,7 +10,26 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+type User = {
+    id: number;
+    name: string;
+};
+
+type Post = {
+    id: number;
+    body: string;
+    created_at?: string; // optional kalau nggak selalu ada
+    user?: User;         // optional kalau nggak selalu ada
+};
+
+type PaginatedPosts = {
+    data: Post[];
+    links?: Record<string, unknown>; // opsional, kalau pagination
+    meta?: Record<string, unknown>;  // opsional
+};
+
+export default function Dashboard({ posts }
+    : { posts: PaginatedPosts }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Posts" />
@@ -31,7 +50,16 @@ export default function Dashboard() {
                 <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                 </div> */}
-                Posts Page
+                <ul>
+                    {/* {posts.map(post => (
+                        <li key={post.id}>-{post.body}</li>
+                    ))} */}
+                    {posts.data.map((post) => (
+                        <li key={post.id}>
+                            {post.user!.name} - {post.body}
+                        </li>
+                    ))}
+                </ul>
             </div>
         </AppLayout>
     );
