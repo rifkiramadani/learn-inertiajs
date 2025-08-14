@@ -1,7 +1,7 @@
 // import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card"
 import { PaginatedPosts } from '@/types/models/posts';
 import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -29,6 +30,7 @@ type greeting = {
     greeting: string
 }
 
+
 export default function Index({ posts, now, greeting }
     : { posts: PaginatedPosts, now: now, greeting: greeting }) {
 
@@ -36,12 +38,29 @@ export default function Index({ posts, now, greeting }
         body: ''
     })
 
+    type PageProps = {
+        message: {
+            body: string;
+            type: "success";
+        };
+    };
+
+    const page = usePage<PageProps>();
+
+    useEffect(() => {
+        if (page.props.message) {
+            toast.success(page.props.message.body, {
+                position: "top-center"
+            })
+        }
+    }, [page.props.message]);
+
     function submit(e: { preventDefault: () => void; }) {
         e.preventDefault()
         post(route('posts.store'), {
             onSuccess: () => {
-                reset()
-                toast.success('Data has been successfully added!')
+                reset();
+                // toast.success('Data has been successfully added!')
             }
         })
     }
