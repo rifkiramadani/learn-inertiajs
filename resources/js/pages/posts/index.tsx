@@ -11,6 +11,7 @@ import {
     CardContent,
 } from "@/components/ui/card"
 import { PaginatedPosts } from '@/types/models/posts';
+import toast from 'react-hot-toast';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -20,9 +21,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+type now = {
+    now: Date
+}
 
-export default function Index({ posts, now }
-    : { posts: PaginatedPosts }) {
+type greeting = {
+    greeting: string
+}
+
+export default function Index({ posts, now, greeting }
+    : { posts: PaginatedPosts, now: now, greeting: greeting }) {
 
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         body: ''
@@ -30,16 +38,18 @@ export default function Index({ posts, now }
 
     function submit(e: { preventDefault: () => void; }) {
         e.preventDefault()
-        post('/posts', {
+        post(route('posts.store'), {
             onSuccess: () => {
                 reset()
+                toast.success('Data has been successfully added!')
             }
         })
     }
 
     function refreshPage() {
-        router.visit('/posts', {
-            only: ['posts']
+        router.visit(route('posts.index'), {
+            only: ['posts'],
+            preserveScroll: true
         })
     }
 
@@ -52,9 +62,10 @@ export default function Index({ posts, now }
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
                 <div className="relative min-h-[100vh] p-10 flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     <form onSubmit={submit}>
-                        <span className='text-2xl'>Add Some Post Here</span>
-                        <div>
-                            <span className='text-md'>{now}</span>
+                        <span className='text-3xl'>{greeting.toString()}</span>
+                        <div className='grid mt-3'>
+                            <span className='text-2xl'>Add Some Post Here</span>
+                            <span className='text-md'>{now.toString()}</span>
                         </div>
                         {/* <span>{data.body}</span> */}
                         <div className='my-5'>
@@ -73,7 +84,19 @@ export default function Index({ posts, now }
                         </div>
                     </form>
                     <div className='mb-5 text-center'>
-                        <span className='text-sm text-blue-300 font-thin' onClick={refreshPage} style={{ cursor: 'pointer' }}>Refresh Page</span>
+                        <span
+                            className='text-sm text-blue-300 font-thin'
+                            onClick={refreshPage}
+                            style={{ cursor: 'pointer' }}
+                        >Refresh Page
+                        </span>
+                        {/* <Link
+                            href={'/posts'}
+                            only={['posts']}
+                            preserveScroll={true}
+                            className='text-sm text-blue-300 font-thin'
+                            style={{ cursor: 'pointer' }}>Refresh Page
+                        </Link> */}
                     </div>
                     {posts.data!.map((post) => (
                         <Card className='mb-2'>
