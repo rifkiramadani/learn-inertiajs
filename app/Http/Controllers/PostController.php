@@ -31,9 +31,11 @@ class PostController extends Controller
             $request->validated()
         );
 
-        return redirect('/posts')->with('message', [
-            'type' => 'success',
-            'body' => 'Post has been created Successfully!'
-        ]);
+        return redirect()->route('posts.index')->with('success', 'Post has been created Successfully!');
+
+        // return redirect('/posts')->with('message', [
+        //     'type' => 'success',
+        //     'body' => 'Post has been created Successfully!'
+        // ]);
     }
 }

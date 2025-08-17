@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Post;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +55,12 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'greeting' => "Welcome",
-            'message' => $request->session()->get('message'),
+            'message' => collect(Arr::only($request->session()->all(), ['success', 'error']))->mapWithKeys(function ($body, $type) {
+                return [
+                    'type' => $type,
+                    'body' => $body
+                ];
+            }),
             'can' => [
                 'create_post' => Auth::check() ? Auth::user()->can('create', Post::class) : false,
             ]

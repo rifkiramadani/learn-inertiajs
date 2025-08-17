@@ -11,7 +11,24 @@ const Toastify = () => {
         };
     }
 
+    // GAGAL
+    // type PageProps = {
+    //     message: {
+    //         success: string
+    //     }
+    // }
+
     const page = usePage<PageProps>();
+
+    // GAGAL
+    // useEffect(() => {
+    //     if (page.props.message) {
+    //         toast.success(page.props.message.success, {
+    //             position: "top-center"
+    //         })
+    //     }
+    // }, [page.props.message]);
+
 
     useEffect(() => {
         if (page.props.message) {
