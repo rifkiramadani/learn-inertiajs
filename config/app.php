@@ -27,6 +27,7 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'custom_error_pages_enable' => env('CUSTOM_ERROR_PAGES_ENABLED', true),
 
     /*
     |--------------------------------------------------------------------------

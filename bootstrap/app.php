@@ -8,6 +8,8 @@ use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use phpDocumentor\Reflection\Types\Boolean;
+
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -26,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
     $exceptions->respond(function (Response $response) {
-        if (in_array($response->getStatusCode(), [403, 404])) {
+        if (shouldRenderCustomErrorPages() && in_array($response->getStatusCode(), [403, 404])) {
             return Inertia::render('error', [
                 'status' => $response->getStatusCode(),
             ]);
@@ -35,3 +37,14 @@ return Application::configure(basePath: dirname(__DIR__))
         return $response;
     });
     })->create();
+
+function shouldRenderCustomErrorPages(): bool
+{
+    // if (app()->environment(['local', 'testing'])) {
+    //     return false;
+    // };
+
+    return (config('app.custom_error_pages_enable'));
+
+    return false;
+}
