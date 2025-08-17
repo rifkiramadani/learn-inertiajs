@@ -2,10 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Http\Request;
+use App\Models\Post;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Auth;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -52,7 +54,10 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'greeting' => "Welcome",
-            'message' => $request->session()->get('message')
+            'message' => $request->session()->get('message'),
+            'can' => [
+                'create_post' => Auth::check() ? Auth::user()->can('create', Post::class) : false,
+            ]
         ];
     }
 }

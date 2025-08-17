@@ -8,11 +8,18 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+// Route::middleware(['auth', 'verified'])->group(function () {
+//     Route::get('dashboard', function () {
+//         return Inertia::render('dashboard');
+//     })->name('dashboard');
+// });
 
+// SHORTHAND ROUTES
+Route::inertia('/dashboard', 'dashboard')
+    ->middleware('auth', 'verified')
+    ->name('dashboard');
+
+Route::middleware('auth')->group(function () {
     // POSTS ROUTE
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');

@@ -1,7 +1,7 @@
 // import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm, router, usePage } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 
@@ -11,9 +11,7 @@ import {
     CardContent,
 } from "@/components/ui/card"
 import { PaginatedPosts } from '@/types/models/posts';
-import toast from 'react-hot-toast';
-import { useEffect } from 'react';
-
+import { usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -30,30 +28,21 @@ type greeting = {
     greeting: string
 }
 
+type PageProps = {
+    can: {
+        create_post: boolean
+    }
+}
+
 
 export default function Index({ posts, now, greeting }
     : { posts: PaginatedPosts, now: now, greeting: greeting }) {
 
-    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm("previousData", {
         body: ''
     })
 
-    type PageProps = {
-        message: {
-            body: string;
-            type: "success";
-        };
-    };
-
     const page = usePage<PageProps>();
-
-    useEffect(() => {
-        if (page.props.message) {
-            toast.success(page.props.message.body, {
-                position: "top-center"
-            })
-        }
-    }, [page.props.message]);
 
     function submit(e: { preventDefault: () => void; }) {
         e.preventDefault()
@@ -68,7 +57,8 @@ export default function Index({ posts, now, greeting }
     function refreshPage() {
         router.visit(route('posts.index'), {
             only: ['posts'],
-            preserveScroll: true
+            preserveScroll: true,
+            preserveState: true
         })
     }
 
@@ -80,8 +70,9 @@ export default function Index({ posts, now, greeting }
 
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
                 <div className="relative min-h-[100vh] p-10 flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <form onSubmit={submit}>
-                        <span className='text-3xl'>{greeting.toString()}</span>
+                    {page.props.can.create_post && (
+                        <form onSubmit={submit}>
+                            <span className='text-3xl'>{greeting.greeting}</span>
                         <div className='grid mt-3'>
                             <span className='text-2xl'>Add Some Post Here</span>
                             <span className='text-md'>{now.toString()}</span>
@@ -102,6 +93,7 @@ export default function Index({ posts, now, greeting }
                             <Button type='submit' disabled={processing}>POST</Button>
                         </div>
                     </form>
+                    )}
                     <div className='mb-5 text-center'>
                         <span
                             className='text-sm text-blue-300 font-thin'
