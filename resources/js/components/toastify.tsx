@@ -31,7 +31,7 @@ const Toastify = () => {
 
 
     useEffect(() => {
-        if (page.props.message) {
+        if (page.props.message.body) {
             toast.success(page.props.message.body, {
                 position: "top-center"
             })

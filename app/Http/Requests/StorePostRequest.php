@@ -14,6 +14,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize()
     {
+        abort(403);
         return Auth::check() && Gate::allows('create', Post::class);
     }
 
