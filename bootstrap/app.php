@@ -1,8 +1,10 @@
 <?php
 
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Application;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
-use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
@@ -23,5 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        
+    $exceptions->respond(function (Response $response) {
+        if ($response->getStatusCode() === 403) {
+            return Inertia::render('error');
+        }
+
+        return $response;
+    });
     })->create();
